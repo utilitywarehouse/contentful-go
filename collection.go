@@ -2,6 +2,7 @@ package contentful
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 )
@@ -41,7 +42,7 @@ func NewCollection(options *CollectionOptions) *Collection {
 }
 
 // Next makes the col.req
-func (col *Collection) Next() (*Collection, error) {
+func (col *Collection) Next(ctx context.Context) (*Collection, error) {
 	// setup query params
 	skip := uint16(col.Limit) * (col.page - 1)
 	col.Query.Skip(skip)
@@ -50,7 +51,7 @@ func (col *Collection) Next() (*Collection, error) {
 	col.req.URL.RawQuery = col.Query.String()
 
 	// makes api call
-	err := col.c.do(col.req, col)
+	err := col.c.do(col.req.WithContext(ctx), col)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package contentful
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -76,7 +77,7 @@ func TestWebhookSaveForCreate(t *testing.T) {
 		},
 	}
 
-	err = cma.Webhooks.Upsert(spaceID, webhook)
+	err = cma.Webhooks.Upsert(context.Background(), spaceID, webhook)
 	assert.Nil(err)
 	assert.Equal("7fstd9fZ9T2p3kwD49FxhI", webhook.Sys.ID)
 	assert.Equal("webhook-name", webhook.Name)
@@ -153,7 +154,7 @@ func TestWebhookSaveForUpdate(t *testing.T) {
 		},
 	}
 
-	err = cma.Webhooks.Upsert(spaceID, webhook)
+	err = cma.Webhooks.Upsert(context.Background(), spaceID, webhook)
 	assert.Nil(err)
 	assert.Equal("7fstd9fZ9T2p3kwD49FxhI", webhook.Sys.ID)
 	assert.Equal(1, webhook.Sys.Version)
@@ -185,6 +186,6 @@ func TestWebhookDelete(t *testing.T) {
 	webhook, err := webhookFromTestData("webhook.json")
 	assert.Nil(err)
 
-	err = cma.Webhooks.Delete(spaceID, webhook)
+	err = cma.Webhooks.Delete(context.Background(), spaceID, webhook)
 	assert.Nil(err)
 }

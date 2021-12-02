@@ -2,6 +2,7 @@ package contentful
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -306,7 +307,7 @@ func (service *ContentTypesService) List(spaceID string) *Collection {
 }
 
 // Get fetched a content type specified by `contentTypeID`
-func (service *ContentTypesService) Get(spaceID, contentTypeID string) (*ContentType, error) {
+func (service *ContentTypesService) Get(ctx context.Context, spaceID, contentTypeID string) (*ContentType, error) {
 	path := fmt.Sprintf("/spaces/%s/content_types/%s", spaceID, contentTypeID)
 	method := "GET"
 
@@ -316,7 +317,7 @@ func (service *ContentTypesService) Get(spaceID, contentTypeID string) (*Content
 	}
 
 	var ct ContentType
-	if err = service.c.do(req, &ct); err != nil {
+	if err = service.c.do(req.WithContext(ctx), &ct); err != nil {
 		return nil, err
 	}
 
@@ -324,7 +325,7 @@ func (service *ContentTypesService) Get(spaceID, contentTypeID string) (*Content
 }
 
 // Upsert updates or creates a new content type
-func (service *ContentTypesService) Upsert(spaceID string, ct *ContentType) error {
+func (service *ContentTypesService) Upsert(ctx context.Context, spaceID string, ct *ContentType) error {
 	bytesArray, err := json.Marshal(ct)
 	if err != nil {
 		return err
@@ -348,11 +349,11 @@ func (service *ContentTypesService) Upsert(spaceID string, ct *ContentType) erro
 
 	req.Header.Set("X-Contentful-Version", strconv.Itoa(ct.GetVersion()))
 
-	return service.c.do(req, ct)
+	return service.c.do(req.WithContext(ctx), ct)
 }
 
 // Delete the content_type
-func (service *ContentTypesService) Delete(spaceID string, ct *ContentType) error {
+func (service *ContentTypesService) Delete(ctx context.Context, spaceID string, ct *ContentType) error {
 	path := fmt.Sprintf("/spaces/%s/content_types/%s", spaceID, ct.Sys.ID)
 	method := "DELETE"
 
@@ -364,11 +365,11 @@ func (service *ContentTypesService) Delete(spaceID string, ct *ContentType) erro
 	version := strconv.Itoa(ct.Sys.Version)
 	req.Header.Set("X-Contentful-Version", version)
 
-	return service.c.do(req, nil)
+	return service.c.do(req.WithContext(ctx), nil)
 }
 
 // Activate the contenttype, a.k.a publish
-func (service *ContentTypesService) Activate(spaceID string, ct *ContentType) error {
+func (service *ContentTypesService) Activate(ctx context.Context, spaceID string, ct *ContentType) error {
 	path := fmt.Sprintf("/spaces/%s/content_types/%s/published", spaceID, ct.Sys.ID)
 	method := "PUT"
 
@@ -380,11 +381,11 @@ func (service *ContentTypesService) Activate(spaceID string, ct *ContentType) er
 	version := strconv.Itoa(ct.Sys.Version)
 	req.Header.Set("X-Contentful-Version", version)
 
-	return service.c.do(req, ct)
+	return service.c.do(req.WithContext(ctx), ct)
 }
 
 // Deactivate the contenttype, a.k.a unpublish
-func (service *ContentTypesService) Deactivate(spaceID string, ct *ContentType) error {
+func (service *ContentTypesService) Deactivate(ctx context.Context, spaceID string, ct *ContentType) error {
 	path := fmt.Sprintf("/spaces/%s/content_types/%s/published", spaceID, ct.Sys.ID)
 	method := "DELETE"
 
@@ -396,5 +397,5 @@ func (service *ContentTypesService) Deactivate(spaceID string, ct *ContentType) 
 	version := strconv.Itoa(ct.Sys.Version)
 	req.Header.Set("X-Contentful-Version", version)
 
-	return service.c.do(req, ct)
+	return service.c.do(req.WithContext(ctx), ct)
 }

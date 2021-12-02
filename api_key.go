@@ -2,6 +2,7 @@ package contentful
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -70,7 +71,7 @@ func (service *APIKeyService) List(spaceID string) *Collection {
 }
 
 // Get returns a single api key entity
-func (service *APIKeyService) Get(spaceID, apiKeyID string) (*APIKey, error) {
+func (service *APIKeyService) Get(ctx context.Context, spaceID, apiKeyID string) (*APIKey, error) {
 	path := fmt.Sprintf("/spaces/%s/api_keys/%s", spaceID, apiKeyID)
 	method := "GET"
 
@@ -80,7 +81,7 @@ func (service *APIKeyService) Get(spaceID, apiKeyID string) (*APIKey, error) {
 	}
 
 	var apiKey APIKey
-	if err := service.c.do(req, &apiKey); err != nil {
+	if err := service.c.do(req.WithContext(ctx), &apiKey); err != nil {
 		return nil, err
 	}
 
@@ -88,7 +89,7 @@ func (service *APIKeyService) Get(spaceID, apiKeyID string) (*APIKey, error) {
 }
 
 // Upsert updates or creates a new api key entity
-func (service *APIKeyService) Upsert(spaceID string, apiKey *APIKey) error {
+func (service *APIKeyService) Upsert(ctx context.Context, spaceID string, apiKey *APIKey) error {
 	bytesArray, err := json.Marshal(apiKey)
 	if err != nil {
 		return err
@@ -112,11 +113,11 @@ func (service *APIKeyService) Upsert(spaceID string, apiKey *APIKey) error {
 
 	req.Header.Set("X-Contentful-Version", strconv.Itoa(apiKey.GetVersion()))
 
-	return service.c.do(req, apiKey)
+	return service.c.do(req.WithContext(ctx), apiKey)
 }
 
 // Delete deletes a sinlge api key entity
-func (service *APIKeyService) Delete(spaceID string, apiKey *APIKey) error {
+func (service *APIKeyService) Delete(ctx context.Context, spaceID string, apiKey *APIKey) error {
 	path := fmt.Sprintf("/spaces/%s/api_keys/%s", spaceID, apiKey.Sys.ID)
 	method := "DELETE"
 
@@ -128,5 +129,5 @@ func (service *APIKeyService) Delete(spaceID string, apiKey *APIKey) error {
 	version := strconv.Itoa(apiKey.Sys.Version)
 	req.Header.Set("X-Contentful-Version", version)
 
-	return service.c.do(req, nil)
+	return service.c.do(req.WithContext(ctx), nil)
 }

@@ -2,6 +2,7 @@ package contentful
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -154,7 +155,7 @@ func (service *AssetsService) List(spaceID string) *Collection {
 }
 
 // Get returns a single asset entity
-func (service *AssetsService) Get(spaceID, assetID string) (*Asset, error) {
+func (service *AssetsService) Get(ctx context.Context, spaceID, assetID string) (*Asset, error) {
 	path := fmt.Sprintf("/spaces/%s/assets/%s", spaceID, assetID)
 	method := "GET"
 
@@ -164,7 +165,7 @@ func (service *AssetsService) Get(spaceID, assetID string) (*Asset, error) {
 	}
 
 	var asset Asset
-	if err := service.c.do(req, &asset); err != nil {
+	if err := service.c.do(req.WithContext(ctx), &asset); err != nil {
 		return nil, err
 	}
 
@@ -172,7 +173,7 @@ func (service *AssetsService) Get(spaceID, assetID string) (*Asset, error) {
 }
 
 // Upsert updates or creates a new asset entity
-func (service *AssetsService) Upsert(spaceID string, asset *Asset) error {
+func (service *AssetsService) Upsert(ctx context.Context, spaceID string, asset *Asset) error {
 	bytesArray, err := json.Marshal(asset)
 	if err != nil {
 		return err
@@ -196,11 +197,11 @@ func (service *AssetsService) Upsert(spaceID string, asset *Asset) error {
 
 	req.Header.Set("X-Contentful-Version", strconv.Itoa(asset.GetVersion()))
 
-	return service.c.do(req, asset)
+	return service.c.do(req.WithContext(ctx), asset)
 }
 
 // Delete sends delete request
-func (service *AssetsService) Delete(spaceID string, asset *Asset) error {
+func (service *AssetsService) Delete(ctx context.Context, spaceID string, asset *Asset) error {
 	path := fmt.Sprintf("/spaces/%s/assets/%s", spaceID, asset.Sys.ID)
 	method := "DELETE"
 
@@ -212,11 +213,11 @@ func (service *AssetsService) Delete(spaceID string, asset *Asset) error {
 	version := strconv.Itoa(asset.Sys.Version)
 	req.Header.Set("X-Contentful-Version", version)
 
-	return service.c.do(req, nil)
+	return service.c.do(req.WithContext(ctx), nil)
 }
 
 // Process the asset
-func (service *AssetsService) Process(spaceID string, asset *Asset) error {
+func (service *AssetsService) Process(ctx context.Context, spaceID string, asset *Asset) error {
 	path := fmt.Sprintf("/spaces/%s/assets/%s/files/%s/process", spaceID, asset.Sys.ID, asset.locale)
 	method := "PUT"
 
@@ -228,11 +229,11 @@ func (service *AssetsService) Process(spaceID string, asset *Asset) error {
 	version := strconv.Itoa(asset.Sys.Version)
 	req.Header.Set("X-Contentful-Version", version)
 
-	return service.c.do(req, nil)
+	return service.c.do(req.WithContext(ctx), nil)
 }
 
 // Publish published the asset
-func (service *AssetsService) Publish(spaceID string, asset *Asset) error {
+func (service *AssetsService) Publish(ctx context.Context, spaceID string, asset *Asset) error {
 	path := fmt.Sprintf("/spaces/%s/assets/%s/published", spaceID, asset.Sys.ID)
 	method := "PUT"
 
@@ -244,5 +245,5 @@ func (service *AssetsService) Publish(spaceID string, asset *Asset) error {
 	version := strconv.Itoa(asset.Sys.Version)
 	req.Header.Set("X-Contentful-Version", version)
 
-	return service.c.do(req, asset)
+	return service.c.do(req.WithContext(ctx), asset)
 }

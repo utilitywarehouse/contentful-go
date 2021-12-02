@@ -2,6 +2,7 @@ package contentful
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -64,7 +65,7 @@ func (service *LocalesService) List(spaceID string) *Collection {
 }
 
 // Get returns a single locale entity
-func (service *LocalesService) Get(spaceID, localeID string) (*Locale, error) {
+func (service *LocalesService) Get(ctx context.Context, spaceID, localeID string) (*Locale, error) {
 	path := fmt.Sprintf("/spaces/%s/locales/%s", spaceID, localeID)
 	method := "GET"
 
@@ -74,7 +75,7 @@ func (service *LocalesService) Get(spaceID, localeID string) (*Locale, error) {
 	}
 
 	var locale Locale
-	if err := service.c.do(req, &locale); err != nil {
+	if err := service.c.do(req.WithContext(ctx), &locale); err != nil {
 		return nil, err
 	}
 
@@ -82,7 +83,7 @@ func (service *LocalesService) Get(spaceID, localeID string) (*Locale, error) {
 }
 
 // Delete the locale
-func (service *LocalesService) Delete(spaceID string, locale *Locale) error {
+func (service *LocalesService) Delete(ctx context.Context, spaceID string, locale *Locale) error {
 	path := fmt.Sprintf("/spaces/%s/locales/%s", spaceID, locale.Sys.ID)
 	method := "DELETE"
 
@@ -94,11 +95,11 @@ func (service *LocalesService) Delete(spaceID string, locale *Locale) error {
 	version := strconv.Itoa(locale.Sys.Version)
 	req.Header.Set("X-Contentful-Version", version)
 
-	return service.c.do(req, nil)
+	return service.c.do(req.WithContext(ctx), nil)
 }
 
 // Upsert updates or creates a new locale entity
-func (service *LocalesService) Upsert(spaceID string, locale *Locale) error {
+func (service *LocalesService) Upsert(ctx context.Context, spaceID string, locale *Locale) error {
 	bytesArray, err := json.Marshal(locale)
 	if err != nil {
 		return err
@@ -122,5 +123,5 @@ func (service *LocalesService) Upsert(spaceID string, locale *Locale) error {
 
 	req.Header.Set("X-Contentful-Version", strconv.Itoa(locale.GetVersion()))
 
-	return service.c.do(req, locale)
+	return service.c.do(req.WithContext(ctx), locale)
 }

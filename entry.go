@@ -2,6 +2,7 @@ package contentful
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -30,12 +31,12 @@ func (entry *Entry) GetVersion() int {
 }
 
 // GetEntryKey returns the entry's keys
-func (service *EntriesService) GetEntryKey(entry *Entry, key string) (*EntryField, error) {
+func (service *EntriesService) GetEntryKey(ctx context.Context, entry *Entry, key string) (*EntryField, error) {
 	ef := EntryField{
 		value: entry.Fields[key],
 	}
 
-	col, err := service.c.ContentTypes.List(entry.Sys.Space.Sys.ID).Next()
+	col, err := service.c.ContentTypes.List(entry.Sys.Space.Sys.ID).Next(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +75,7 @@ func (service *EntriesService) List(spaceID string) *Collection {
 }
 
 // Get returns a single entry
-func (service *EntriesService) Get(spaceID, entryID string) (*Entry, error) {
+func (service *EntriesService) Get(ctx context.Context, spaceID, entryID string) (*Entry, error) {
 	path := fmt.Sprintf("/spaces/%s/entries/%s", spaceID, entryID)
 	query := url.Values{}
 	method := "GET"
@@ -85,7 +86,7 @@ func (service *EntriesService) Get(spaceID, entryID string) (*Entry, error) {
 	}
 
 	var entry Entry
-	if ok := service.c.do(req, &entry); ok != nil {
+	if ok := service.c.do(req.WithContext(ctx), &entry); ok != nil {
 		return nil, err
 	}
 
@@ -93,7 +94,7 @@ func (service *EntriesService) Get(spaceID, entryID string) (*Entry, error) {
 }
 
 // Upsert updates or creates a new entry
-func (service *EntriesService) Upsert(spaceID string, entry *Entry) error {
+func (service *EntriesService) Upsert(ctx context.Context, spaceID string, entry *Entry) error {
 	fields := map[string]interface{}{
 		"fields": entry.Fields,
 	}
@@ -128,11 +129,11 @@ func (service *EntriesService) Upsert(spaceID string, entry *Entry) error {
 	req.Header.Set("X-Contentful-Version", version)
 	req.Header.Set("X-Contentful-Content-Type", entry.Sys.ContentType.Sys.ID)
 
-	return service.c.do(req, entry)
+	return service.c.do(req.WithContext(ctx), entry)
 }
 
 // Delete the entry
-func (service *EntriesService) Delete(spaceID string, entryID string) error {
+func (service *EntriesService) Delete(ctx context.Context, spaceID string, entryID string) error {
 	path := fmt.Sprintf("/spaces/%s/entries/%s", spaceID, entryID)
 	method := "DELETE"
 
@@ -141,11 +142,11 @@ func (service *EntriesService) Delete(spaceID string, entryID string) error {
 		return err
 	}
 
-	return service.c.do(req, nil)
+	return service.c.do(req.WithContext(ctx), nil)
 }
 
 // Publish the entry
-func (service *EntriesService) Publish(spaceID string, entry *Entry) error {
+func (service *EntriesService) Publish(ctx context.Context, spaceID string, entry *Entry) error {
 	path := fmt.Sprintf("/spaces/%s/entries/%s/published", spaceID, entry.Sys.ID)
 	method := "PUT"
 
@@ -157,11 +158,11 @@ func (service *EntriesService) Publish(spaceID string, entry *Entry) error {
 	version := strconv.Itoa(entry.Sys.Version)
 	req.Header.Set("X-Contentful-Version", version)
 
-	return service.c.do(req, nil)
+	return service.c.do(req.WithContext(ctx), nil)
 }
 
 // Unpublish the entry
-func (service *EntriesService) Unpublish(spaceID string, entry *Entry) error {
+func (service *EntriesService) Unpublish(ctx context.Context, spaceID string, entry *Entry) error {
 	path := fmt.Sprintf("/spaces/%s/entries/%s/published", spaceID, entry.Sys.ID)
 	method := "DELETE"
 
@@ -173,5 +174,5 @@ func (service *EntriesService) Unpublish(spaceID string, entry *Entry) error {
 	version := strconv.Itoa(entry.Sys.Version)
 	req.Header.Set("X-Contentful-Version", version)
 
-	return service.c.do(req, nil)
+	return service.c.do(req.WithContext(ctx), nil)
 }

@@ -1,6 +1,7 @@
 package contentful
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -14,7 +15,7 @@ import (
 func ExampleContentTypesService_Get() {
 	cma := NewCMA("cma-token")
 
-	contentType, err := cma.ContentTypes.Get("space-id", "content-type-id")
+	contentType, err := cma.ContentTypes.Get(context.Background(), "space-id", "content-type-id")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,7 +26,7 @@ func ExampleContentTypesService_Get() {
 func ExampleContentTypesService_List() {
 	cma := NewCMA("cma-token")
 
-	collection, err := cma.ContentTypes.List("space-id").Next()
+	collection, err := cma.ContentTypes.List("space-id").Next(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,7 +63,7 @@ func ExampleContentTypesService_Upsert_create() {
 		},
 	}
 
-	err := cma.ContentTypes.Upsert("space-id", contentType)
+	err := cma.ContentTypes.Upsert(context.Background(), "space-id", contentType)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,14 +72,14 @@ func ExampleContentTypesService_Upsert_create() {
 func ExampleContentTypesService_Upsert_update() {
 	cma := NewCMA("cma-token")
 
-	contentType, err := cma.ContentTypes.Get("space-id", "content-type-id")
+	contentType, err := cma.ContentTypes.Get(context.Background(), "space-id", "content-type-id")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	contentType.Name = "modified content type name"
 
-	err = cma.ContentTypes.Upsert("space-id", contentType)
+	err = cma.ContentTypes.Upsert(context.Background(), "space-id", contentType)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -87,12 +88,12 @@ func ExampleContentTypesService_Upsert_update() {
 func ExampleContentTypesService_Activate() {
 	cma := NewCMA("cma-token")
 
-	contentType, err := cma.ContentTypes.Get("space-id", "content-type-id")
+	contentType, err := cma.ContentTypes.Get(context.Background(), "space-id", "content-type-id")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = cma.ContentTypes.Activate("space-id", contentType)
+	err = cma.ContentTypes.Activate(context.Background(), "space-id", contentType)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -101,12 +102,12 @@ func ExampleContentTypesService_Activate() {
 func ExampleContentTypesService_Deactivate() {
 	cma := NewCMA("cma-token")
 
-	contentType, err := cma.ContentTypes.Get("space-id", "content-type-id")
+	contentType, err := cma.ContentTypes.Get(context.Background(), "space-id", "content-type-id")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = cma.ContentTypes.Deactivate("space-id", contentType)
+	err = cma.ContentTypes.Deactivate(context.Background(), "space-id", contentType)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -115,12 +116,12 @@ func ExampleContentTypesService_Deactivate() {
 func ExampleContentTypesService_Delete() {
 	cma := NewCMA("cma-token")
 
-	contentType, err := cma.ContentTypes.Get("space-id", "content-type-id")
+	contentType, err := cma.ContentTypes.Get(context.Background(), "space-id", "content-type-id")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = cma.ContentTypes.Delete("space-id", contentType)
+	err = cma.ContentTypes.Delete(context.Background(), "space-id", contentType)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -129,7 +130,7 @@ func ExampleContentTypesService_Delete() {
 func ExampleContentTypesService_Delete_allDrafts() {
 	cma := NewCMA("cma-token")
 
-	collection, err := cma.ContentTypes.List("space-id").Next()
+	collection, err := cma.ContentTypes.List("space-id").Next(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -138,7 +139,7 @@ func ExampleContentTypesService_Delete_allDrafts() {
 
 	for _, contentType := range contentTypes {
 		if contentType.Sys.PublishedAt == "" {
-			err := cma.ContentTypes.Delete("space-id", contentType)
+			err := cma.ContentTypes.Delete(context.Background(), "space-id", contentType)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -168,7 +169,7 @@ func TestContentTypesServiceList(t *testing.T) {
 	cma = NewCMA(CMAToken)
 	cma.BaseURL = server.URL
 
-	_, err = cma.ContentTypes.List(spaceID).Next()
+	_, err = cma.ContentTypes.List(spaceID).Next(context.Background())
 	assert.Nil(err)
 }
 
@@ -198,7 +199,7 @@ func TestContentTypesServiceActivate(t *testing.T) {
 	ct, err := contentTypeFromTestData("content_type.json")
 	assert.Nil(err)
 
-	err = cma.ContentTypes.Activate(spaceID, ct)
+	err = cma.ContentTypes.Activate(context.Background(), spaceID, ct)
 	assert.Nil(err)
 }
 
@@ -228,7 +229,7 @@ func TestContentTypesServiceDeactivate(t *testing.T) {
 	ct, err := contentTypeFromTestData("content_type.json")
 	assert.Nil(err)
 
-	err = cma.ContentTypes.Deactivate(spaceID, ct)
+	err = cma.ContentTypes.Deactivate(context.Background(), spaceID, ct)
 	assert.Nil(err)
 }
 
@@ -297,7 +298,7 @@ func TestContentTypeSaveForCreate(t *testing.T) {
 		DisplayField: field1.ID,
 	}
 
-	err = cma.ContentTypes.Upsert("id1", ct)
+	err = cma.ContentTypes.Upsert(context.Background(), "id1", ct)
 	assert.Nil(err)
 	assert.Equal("63Vgs0BFK0USe4i2mQUGK6", ct.Sys.ID)
 	assert.Equal("ct-name", ct.Name)
@@ -379,7 +380,7 @@ func TestContentTypeSaveForUpdate(t *testing.T) {
 	ct.Fields = append(ct.Fields, field3)
 	ct.DisplayField = ct.Fields[2].ID
 
-	cma.ContentTypes.Upsert("id1", ct)
+	cma.ContentTypes.Upsert(context.Background(), "id1", ct)
 	assert.Nil(err)
 	assert.Equal("63Vgs0BFK0USe4i2mQUGK6", ct.Sys.ID)
 	assert.Equal("ct-name-updated", ct.Name)
@@ -414,7 +415,7 @@ func TestContentTypeCreateWithoutID(t *testing.T) {
 		Name: "MyContentType",
 	}
 
-	cma.ContentTypes.Upsert("id1", ct)
+	cma.ContentTypes.Upsert(context.Background(), "id1", ct)
 	assert.Nil(err)
 }
 
@@ -447,7 +448,7 @@ func TestContentTypeCreateWithID(t *testing.T) {
 		Name: "MyContentType",
 	}
 
-	cma.ContentTypes.Upsert("id1", ct)
+	cma.ContentTypes.Upsert(context.Background(), "id1", ct)
 	assert.Nil(err)
 }
 
@@ -476,7 +477,7 @@ func TestContentTypeDelete(t *testing.T) {
 	assert.Nil(err)
 
 	// delete content type
-	err = cma.ContentTypes.Delete("id1", ct)
+	err = cma.ContentTypes.Delete(context.Background(), "id1", ct)
 	assert.Nil(err)
 }
 
@@ -539,7 +540,7 @@ func TestContentTypeFieldRef(t *testing.T) {
 		DisplayField: field1.ID,
 	}
 
-	err = cma.ContentTypes.Upsert("id1", ct)
+	err = cma.ContentTypes.Upsert(context.Background(), "id1", ct)
 	assert.Nil(err)
 }
 
@@ -602,7 +603,7 @@ func TestContentTypeFieldArray(t *testing.T) {
 		DisplayField: field1.ID,
 	}
 
-	err = cma.ContentTypes.Upsert("id1", ct)
+	err = cma.ContentTypes.Upsert(context.Background(), "id1", ct)
 	assert.Nil(err)
 }
 
@@ -689,7 +690,7 @@ func TestContentTypeFieldValidationRangeUniquePredefinedValues(t *testing.T) {
 		DisplayField: field1.ID,
 	}
 
-	err = cma.ContentTypes.Upsert("id1", ct)
+	err = cma.ContentTypes.Upsert(context.Background(), "id1", ct)
 	assert.Nil(err)
 }
 
@@ -824,7 +825,7 @@ func TestContentTypeFieldTypeMedia(t *testing.T) {
 		DisplayField: field1.ID,
 	}
 
-	err = cma.ContentTypes.Upsert("id1", ct)
+	err = cma.ContentTypes.Upsert(context.Background(), "id1", ct)
 	assert.Nil(err)
 }
 
@@ -843,7 +844,7 @@ func TestContentTypeFieldValidationsUnmarshal(t *testing.T) {
 	cma = NewCMA(CMAToken)
 	cma.BaseURL = server.URL
 
-	ct, err := cma.ContentTypes.Get(spaceID, "validationsTest")
+	ct, err := cma.ContentTypes.Get(context.Background(), spaceID, "validationsTest")
 	assert.Nil(err)
 
 	uniqueValidations := []FieldValidation{}

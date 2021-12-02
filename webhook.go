@@ -2,6 +2,7 @@ package contentful
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -55,7 +56,7 @@ func (service *WebhooksService) List(spaceID string) *Collection {
 }
 
 // Get returns a single webhook entity
-func (service *WebhooksService) Get(spaceID, webhookID string) (*Webhook, error) {
+func (service *WebhooksService) Get(ctx context.Context, spaceID, webhookID string) (*Webhook, error) {
 	path := fmt.Sprintf("/spaces/%s/webhook_definitions/%s", spaceID, webhookID)
 	method := "GET"
 
@@ -65,7 +66,7 @@ func (service *WebhooksService) Get(spaceID, webhookID string) (*Webhook, error)
 	}
 
 	var webhook Webhook
-	if err := service.c.do(req, &webhook); err != nil {
+	if err := service.c.do(req.WithContext(ctx), &webhook); err != nil {
 		return nil, err
 	}
 
@@ -73,7 +74,7 @@ func (service *WebhooksService) Get(spaceID, webhookID string) (*Webhook, error)
 }
 
 // Upsert updates or creates a new entity
-func (service *WebhooksService) Upsert(spaceID string, webhook *Webhook) error {
+func (service *WebhooksService) Upsert(ctx context.Context, spaceID string, webhook *Webhook) error {
 	bytesArray, err := json.Marshal(webhook)
 	if err != nil {
 		return err
@@ -97,11 +98,11 @@ func (service *WebhooksService) Upsert(spaceID string, webhook *Webhook) error {
 
 	req.Header.Set("X-Contentful-Version", strconv.Itoa(webhook.GetVersion()))
 
-	return service.c.do(req, webhook)
+	return service.c.do(req.WithContext(ctx), webhook)
 }
 
 // Delete the webhook
-func (service *WebhooksService) Delete(spaceID string, webhook *Webhook) error {
+func (service *WebhooksService) Delete(ctx context.Context, spaceID string, webhook *Webhook) error {
 	path := fmt.Sprintf("/spaces/%s/webhook_definitions/%s", spaceID, webhook.Sys.ID)
 	method := "DELETE"
 
@@ -113,5 +114,5 @@ func (service *WebhooksService) Delete(spaceID string, webhook *Webhook) error {
 	version := strconv.Itoa(webhook.Sys.Version)
 	req.Header.Set("X-Contentful-Version", version)
 
-	return service.c.do(req, nil)
+	return service.c.do(req.WithContext(ctx), nil)
 }

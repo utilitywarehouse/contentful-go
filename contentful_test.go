@@ -2,6 +2,7 @@ package contentful
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -310,7 +311,7 @@ func TestBackoffForPerSecondLimiting(t *testing.T) {
 		rateLimited = false
 	}()
 
-	space, err := cma.Spaces.Get("id1")
+	space, err := cma.Spaces.Get(context.Background(), "id1")
 	assert.Nil(err)
 	assert.Equal(space.Name, "Contentful Example API")
 	assert.Equal(space.Sys.ID, "id1")

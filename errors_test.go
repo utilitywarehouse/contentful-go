@@ -1,6 +1,7 @@
 package contentful
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -27,7 +28,7 @@ func TestNotFoundErrorResponse(t *testing.T) {
 	cma.BaseURL = server.URL
 
 	// test space
-	_, err = cma.Spaces.Get("unknown-space-id")
+	_, err = cma.Spaces.Get(context.Background(), "unknown-space-id")
 	assert.NotNil(err)
 	_, ok := err.(NotFoundError)
 	assert.Equal(true, ok)
@@ -58,7 +59,7 @@ func TestRateLimitExceededResponse(t *testing.T) {
 
 	// test space
 	space := &Space{Name: "test-space"}
-	err = cma.Spaces.Upsert(space)
+	err = cma.Spaces.Upsert(context.Background(), space)
 	assert.NotNil(err)
 	_, ok := err.(RateLimitExceededError)
 	assert.Equal(true, ok)

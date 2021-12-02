@@ -1,6 +1,7 @@
 package contentful
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -32,7 +33,7 @@ func TestLocalesServiceList(t *testing.T) {
 	cma = NewCMA(CMAToken)
 	cma.BaseURL = server.URL
 
-	_, err = cma.Locales.List(spaceID).Next()
+	_, err = cma.Locales.List(spaceID).Next(context.Background())
 	assert.Nil(err)
 }
 
@@ -58,7 +59,7 @@ func TestLocalesServiceGet(t *testing.T) {
 	cma = NewCMA(CMAToken)
 	cma.BaseURL = server.URL
 
-	locale, err := cma.Locales.Get(spaceID, "4aGeQYgByqQFJtToAOh2JJ")
+	locale, err := cma.Locales.Get(context.Background(), spaceID, "4aGeQYgByqQFJtToAOh2JJ")
 	assert.Nil(err)
 	assert.Equal("U.S. English", locale.Name)
 	assert.Equal("en-US", locale.Code)
@@ -97,7 +98,7 @@ func TestLocalesServiceUpsertCreate(t *testing.T) {
 		Code: "de-AT",
 	}
 
-	err = cma.Locales.Upsert(spaceID, locale)
+	err = cma.Locales.Upsert(context.Background(), spaceID, locale)
 	assert.Nil(err)
 }
 
@@ -135,7 +136,7 @@ func TestLocalesServiceUpsertUpdate(t *testing.T) {
 	locale.Name = "modified-name"
 	locale.Code = "modified-code"
 
-	err = cma.Locales.Upsert(spaceID, locale)
+	err = cma.Locales.Upsert(context.Background(), spaceID, locale)
 	assert.Nil(err)
 }
 
@@ -164,6 +165,6 @@ func TestLocalesServiceDelete(t *testing.T) {
 	assert.Nil(err)
 
 	// delete locale
-	err = cma.Locales.Delete(spaceID, locale)
+	err = cma.Locales.Delete(context.Background(), spaceID, locale)
 	assert.Nil(err)
 }

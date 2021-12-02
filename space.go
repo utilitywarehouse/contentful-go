@@ -2,6 +2,7 @@ package contentful
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -51,7 +52,7 @@ func (service *SpacesService) List() *Collection {
 }
 
 // Get returns a single space entity
-func (service *SpacesService) Get(spaceID string) (*Space, error) {
+func (service *SpacesService) Get(ctx context.Context, spaceID string) (*Space, error) {
 	path := fmt.Sprintf("/spaces/%s", spaceID)
 	req, err := service.c.newRequest(http.MethodGet, path, nil, nil)
 	if err != nil {
@@ -59,7 +60,7 @@ func (service *SpacesService) Get(spaceID string) (*Space, error) {
 	}
 
 	var space Space
-	if ok := service.c.do(req, &space); ok != nil {
+	if ok := service.c.do(req.WithContext(ctx), &space); ok != nil {
 		return &Space{}, ok
 	}
 
@@ -67,7 +68,7 @@ func (service *SpacesService) Get(spaceID string) (*Space, error) {
 }
 
 // Upsert updates or creates a new space
-func (service *SpacesService) Upsert(space *Space) error {
+func (service *SpacesService) Upsert(ctx context.Context, space *Space) error {
 	bytesArray, err := json.Marshal(space)
 	if err != nil {
 		return err
@@ -91,11 +92,11 @@ func (service *SpacesService) Upsert(space *Space) error {
 
 	req.Header.Set("X-Contentful-Version", strconv.Itoa(space.GetVersion()))
 
-	return service.c.do(req, space)
+	return service.c.do(req.WithContext(ctx), space)
 }
 
 // Delete the given space
-func (service *SpacesService) Delete(space *Space) error {
+func (service *SpacesService) Delete(ctx context.Context, space *Space) error {
 	path := fmt.Sprintf("/spaces/%s", space.Sys.ID)
 
 	req, err := service.c.newRequest(http.MethodDelete, path, nil, nil)
@@ -106,5 +107,5 @@ func (service *SpacesService) Delete(space *Space) error {
 	version := strconv.Itoa(space.Sys.Version)
 	req.Header.Set("X-Contentful-Version", version)
 
-	return service.c.do(req, nil)
+	return service.c.do(req.WithContext(ctx), nil)
 }

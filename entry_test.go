@@ -1,6 +1,7 @@
 package contentful
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -30,7 +31,7 @@ func ExampleEntriesService_Upsert_create() {
 		},
 	}
 
-	err := cma.Entries.Upsert("space-id", entry)
+	err := cma.Entries.Upsert(context.Background(), "space-id", entry)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,7 +40,7 @@ func ExampleEntriesService_Upsert_create() {
 func ExampleEntryService_Upsert_update() {
 	cma := NewCMA("cma-token")
 
-	entry, err := cma.Entries.Get("space-id", "entry-id")
+	entry, err := cma.Entries.Get(context.Background(), "space-id", "entry-id")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,7 +49,7 @@ func ExampleEntryService_Upsert_update() {
 		"en-US": "modified entry content",
 	}
 
-	err = cma.Entries.Upsert("space-id", entry)
+	err = cma.Entries.Upsert(context.Background(), "space-id", entry)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -100,7 +101,7 @@ func TestEntrySaveForCreate(t *testing.T) {
 		},
 	}
 
-	err = cma.Entries.Upsert("id1", entry)
+	err = cma.Entries.Upsert(context.Background(), "id1", entry)
 	assert.Nil(err)
 	assert.Equal("foocat", entry.Sys.ID)
 }
