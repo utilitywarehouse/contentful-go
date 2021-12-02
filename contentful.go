@@ -10,8 +10,6 @@ import (
 	"net/url"
 	"strconv"
 	"time"
-
-	"moul.io/http2curl"
 )
 
 // Client model
@@ -165,11 +163,6 @@ func (c *Client) newRequest(method, path string, query url.Values, body io.Reade
 }
 
 func (c *Client) do(req *http.Request, v interface{}) error {
-	if c.Debug == true {
-		command, _ := http2curl.GetCurlCommand(req)
-		fmt.Println(command)
-	}
-
 	res, err := c.client.Do(req)
 	if err != nil {
 		return err
