@@ -12,7 +12,7 @@ import (
 // EntriesService service
 type EntriesService service
 
-//Entry model
+// Entry model
 type Entry struct {
 	locale string
 	Sys    *Sys `json:"sys"`
@@ -69,7 +69,7 @@ func (service *EntriesService) List(spaceID string) *Collection {
 	col := NewCollection(&CollectionOptions{})
 	col.c = service.c
 	col.req = req
-	
+
 	return col
 }
 
