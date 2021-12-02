@@ -60,6 +60,16 @@ func (col *Collection) Next() (*Collection, error) {
 	return col, nil
 }
 
+// Fetch makes the col.req without pagination
+func (col *Collection) Fetch() (*Collection, error) {
+	// override request query
+	col.req.URL.RawQuery = col.Query.String()
+
+	// makes api call
+	err := col.c.do(col.req, col)
+	return col, err
+}
+
 // ToContentType cast Items to ContentType model
 func (col *Collection) ToContentType() []*ContentType {
 	var contentTypes []*ContentType
