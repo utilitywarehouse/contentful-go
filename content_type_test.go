@@ -152,7 +152,7 @@ func TestContentTypesServiceList(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "GET")
-		assert.Equal(r.URL.Path, "/spaces/"+spaceID+"/content_types")
+		assert.Equal(r.URL.Path, "/spaces/"+spaceID+"/environments/master/content_types")
 
 		checkHeaders(r, assert)
 
@@ -178,7 +178,7 @@ func TestContentTypesServiceActivate(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "PUT")
-		assert.Equal(r.URL.Path, "/spaces/"+spaceID+"/content_types/63Vgs0BFK0USe4i2mQUGK6/published")
+		assert.Equal(r.URL.Path, "/spaces/"+spaceID+"/environments/master/content_types/63Vgs0BFK0USe4i2mQUGK6/published")
 
 		checkHeaders(r, assert)
 
@@ -208,7 +208,7 @@ func TestContentTypesServiceDeactivate(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "DELETE")
-		assert.Equal(r.URL.Path, "/spaces/"+spaceID+"/content_types/63Vgs0BFK0USe4i2mQUGK6/published")
+		assert.Equal(r.URL.Path, "/spaces/"+spaceID+"/environments/master/content_types/63Vgs0BFK0USe4i2mQUGK6/published")
 
 		checkHeaders(r, assert)
 
@@ -238,7 +238,7 @@ func TestContentTypeSaveForCreate(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "POST")
-		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/content_types")
+		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/environments/master/content_types")
 		checkHeaders(r, assert)
 
 		var payload map[string]interface{}
@@ -310,7 +310,7 @@ func TestContentTypeSaveForUpdate(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "PUT")
-		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/content_types/63Vgs0BFK0USe4i2mQUGK6")
+		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/environments/master/content_types/63Vgs0BFK0USe4i2mQUGK6")
 		checkHeaders(r, assert)
 
 		var payload map[string]interface{}
@@ -393,7 +393,7 @@ func TestContentTypeCreateWithoutID(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "POST")
-		assert.Equal(r.RequestURI, "/spaces/id1/content_types")
+		assert.Equal(r.RequestURI, "/spaces/id1/environments/master/content_types")
 		checkHeaders(r, assert)
 
 		w.WriteHeader(200)
@@ -424,7 +424,7 @@ func TestContentTypeCreateWithID(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "PUT")
-		assert.Equal(r.RequestURI, "/spaces/id1/content_types/mycontenttype")
+		assert.Equal(r.RequestURI, "/spaces/id1/environments/master/content_types/mycontenttype")
 		checkHeaders(r, assert)
 
 		w.WriteHeader(200)
@@ -457,7 +457,7 @@ func TestContentTypeDelete(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "DELETE")
-		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/content_types/63Vgs0BFK0USe4i2mQUGK6")
+		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/environments/master/content_types/63Vgs0BFK0USe4i2mQUGK6")
 		checkHeaders(r, assert)
 
 		w.WriteHeader(200)
@@ -486,7 +486,7 @@ func TestContentTypeFieldRef(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "POST")
-		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/content_types")
+		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/environments/master/content_types")
 		checkHeaders(r, assert)
 
 		var payload map[string]interface{}
@@ -549,7 +549,7 @@ func TestContentTypeFieldArray(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "POST")
-		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/content_types")
+		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/environments/master/content_types")
 		checkHeaders(r, assert)
 
 		var payload map[string]interface{}
@@ -612,7 +612,7 @@ func TestContentTypeFieldValidationRangeUniquePredefinedValues(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "POST")
-		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/content_types")
+		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/environments/master/content_types")
 		checkHeaders(r, assert)
 
 		var payload map[string]interface{}
@@ -699,7 +699,7 @@ func TestContentTypeFieldTypeMedia(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "POST")
-		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/content_types")
+		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/environments/master/content_types")
 		checkHeaders(r, assert)
 
 		var payload map[string]interface{}

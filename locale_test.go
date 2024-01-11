@@ -16,7 +16,7 @@ func TestLocalesServiceList(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "GET")
-		assert.Equal(r.URL.Path, "/spaces/"+spaceID+"/locales")
+		assert.Equal(r.URL.Path, "/spaces/"+spaceID+"/environments/master/locales")
 
 		checkHeaders(r, assert)
 
@@ -42,7 +42,7 @@ func TestLocalesServiceGet(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "GET")
-		assert.Equal(r.URL.Path, "/spaces/"+spaceID+"/locales/4aGeQYgByqQFJtToAOh2JJ")
+		assert.Equal(r.URL.Path, "/spaces/"+spaceID+"/environments/master/locales/4aGeQYgByqQFJtToAOh2JJ")
 
 		checkHeaders(r, assert)
 
@@ -70,7 +70,7 @@ func TestLocalesServiceUpsertCreate(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "POST")
-		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/locales")
+		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/environments/master/locales")
 
 		checkHeaders(r, assert)
 
@@ -107,7 +107,7 @@ func TestLocalesServiceUpsertUpdate(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "PUT")
-		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/locales/4aGeQYgByqQFJtToAOh2JJ")
+		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/environments/master/locales/4aGeQYgByqQFJtToAOh2JJ")
 
 		checkHeaders(r, assert)
 
@@ -145,7 +145,7 @@ func TestLocalesServiceDelete(t *testing.T) {
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(r.Method, "DELETE")
-		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/locales/4aGeQYgByqQFJtToAOh2JJ")
+		assert.Equal(r.RequestURI, "/spaces/"+spaceID+"/environments/master/locales/4aGeQYgByqQFJtToAOh2JJ")
 		checkHeaders(r, assert)
 
 		w.WriteHeader(200)
